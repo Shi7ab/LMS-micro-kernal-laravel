@@ -1,0 +1,64 @@
+full structure
+
+LMS-micro-kernel/
+|
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── routes/
+├── storage/
+│
+├── kernel/
+│   ├── Contracts/
+│   │   ├── ModuleInterface.php
+│   │   └── EventBusInterface.php
+│   │
+│   ├── EventBus/
+│   │   └── EventBus.php
+│   │
+│   ├── Middleware/
+│   │   ├── AuthMiddleware.php
+│   │   └── RoleMiddleware.php
+│   │
+│   ├── Registry/
+│   │   └── PluginRegistry.php
+│   │
+│   ├── Support/
+│   │   └── ApiResponse.php
+│   │
+│   └── KernelServiceProvider.php
+│
+├── plugins/
+│   └── Auth/
+│       ├── src/
+│       │   ├── Http/
+│       │   │   ├── Controllers/
+│       │   │   │   └── AuthController.php
+│       │   │   │
+│       │   │   └── Requests/
+│       │   │       ├── LoginRequest.php
+│       │   │       └── RegisterRequest.php
+│       │   │
+│       │   ├── Services/
+│       │   │   └── AuthService.php
+│       │   │
+│       │   ├── Repositories/
+│       │   │   └── UserRepository.php
+│       │   │
+│       │   ├── Models/
+│       │   │   └── User.php
+│       │   │
+│       │   ├── Routes/
+│       │   │   └── api.php
+│       │   │
+│       │   └── Providers/
+│       │       └── AuthPluginServiceProvider.php
+│       │
+│       └── database/
+│           └── migrations/
+│               └── create_users_table.php
+│
+├── shared/
+│
+└── composer.json

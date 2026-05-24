@@ -1,10 +1,10 @@
 <?php
 
-namespace Plugins\Auth\src\Services;
+namespace plugins\Auth\src\Services;
 
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Plugins\Auth\src\Repositories\UserRepository;
+use plugins\Auth\src\Repositories\UserRepository;
 
 class AuthService
 {

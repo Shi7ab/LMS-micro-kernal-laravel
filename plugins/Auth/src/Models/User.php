@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Auth\src\Models;
+namespace plugins\Auth\src\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

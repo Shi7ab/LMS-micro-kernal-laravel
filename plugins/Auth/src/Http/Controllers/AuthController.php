@@ -1,12 +1,12 @@
 <?php
 
-namespace Plugins\Auth\src\Http\Controllers;
+namespace plugins\Auth\src\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Kernel\Support\ApiResponse;
-use Plugins\Auth\src\Services\AuthService;
-use Plugins\Auth\src\Http\Requests\LoginRequest;
-use Plugins\Auth\src\Http\Requests\RegisterRequest;
+use plugins\Auth\src\Services\AuthService;
+use plugins\Auth\src\Http\Requests\LoginRequest;
+use plugins\Auth\src\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {

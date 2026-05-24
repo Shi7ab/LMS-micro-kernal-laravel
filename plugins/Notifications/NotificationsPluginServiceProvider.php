@@ -22,5 +22,7 @@ class NotificationsPluginServiceProvider extends ServiceProvider
                 'updated_at' => now()
             ]);
         });
+
+
     }
 }

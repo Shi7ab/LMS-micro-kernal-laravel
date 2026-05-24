@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Plugins\Auth\src\Http\Controllers\AuthController;
+use plugins\Auth\src\Http\Controllers\AuthController;
 
 Route::prefix('api/auth')->group(function () {
 

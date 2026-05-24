@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //'providers' => [
 
-        \Kernel\KernelServiceProvider::class;
+        // \Kernel\KernelServiceProvider::class;
 
     }
 }

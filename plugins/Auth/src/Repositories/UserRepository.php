@@ -1,8 +1,8 @@
 <?php
 
-namespace Plugins\Auth\src\Repositories;
+namespace plugins\Auth\src\Repositories;
 
-use Plugins\Auth\src\Models\User;
+use plugins\Auth\src\Models\User;
 
 class UserRepository
 {

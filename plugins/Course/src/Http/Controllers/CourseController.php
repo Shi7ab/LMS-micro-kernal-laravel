@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Event;
 
 use Kernel\Support\ApiResponse;
 use plugins\Course\src\Models\Course;
+// use plugins\Course\src\Models\Lesson;
+
 use plugins\Course\src\Models\Lesson;
+//use plugins\Course\src\Models\Course;
 
 class CourseController extends Controller
 {
@@ -45,6 +48,7 @@ class CourseController extends Controller
     /**
      * Add lesson to course
      */
+
     public function addLesson(Request $request, string $courseId)
     {
         $validated = $request->validate([

@@ -7,9 +7,14 @@ use plugins\Quiz\src\Models\Quiz;
 use plugins\Quiz\src\Models\QuizQuestion;
 use plugins\Quiz\src\Models\QuizAttempt;
 use Illuminate\Support\Facades\Event;
+use plugins\Quiz\src\Services\QuizService;
 
 class QuizController extends Controller
 {
+    public $service;
+    public function __contruct(QuizService $service){
+      $this->service = $service;
+    }
 
     public function store(Request $request)
     {
@@ -22,33 +27,35 @@ class QuizController extends Controller
             'questions.*.options' => 'required|array',
             'questions.*.correct_option' => 'required|string',
         ]);
-
-        $quiz = Quiz::create([
+        // creating the quiz
+     /*   $quiz = Quiz::create([
             'lesson_id' => $validated['lesson_id'],
             'title' => $validated['title'],
             'passing_score' => $validated['passing_score']
         ]);
-
+        // create question in the quiz
         foreach ($validated['questions'] as $q) {
             $quiz->questions()->create([
                 'question_text' => $q['question_text'],
                 'options' => $q['options'],
                 'correct_option' => $q['correct_option']
             ]);
-        }
+        }*/
+
+            $quiz =  $service->create($validated);
 
         return response()->json(['status' => 'success', 'data' => $quiz->load('questions')], 201);
     }
 
 
     public function submit(Request $request, $quizId)
-    {
-        $quiz = Quiz::with('questions')->findOrFail($quizId);
-        $studentId = $request->attributes->get('user_id');
+    {  // submiting questuin and validate the answer
+       //$quiz = Quiz::with('questions')->findOrFail($quizId);
+        // $studentId = $request->attributes->get('user_id');
         $validated = $request->validate([
             'answers' => 'required|array',
         ]);
-
+        /*
         $totalQuestions = $quiz->questions->count();
         $correctAnswersCount = 0;
 
@@ -61,7 +68,7 @@ class QuizController extends Controller
 
         $score = ($totalQuestions > 0) ? ($correctAnswersCount / $totalQuestions) * 100 : 0;
         $isPassed = $score >= $quiz->passing_score;
-
+        // creating the attrmpts and fire event is passed
         $attempt = QuizAttempt::create([
             'student_id' => $studentId,
             'quiz_id' => $quiz->id,
@@ -72,8 +79,9 @@ class QuizController extends Controller
         if ($isPassed) {
             Event::dispatch('quiz.passed', [$studentId, $quiz->lesson_id]);
         }
-
-        return response()->json([
+            */
+        $quiz = $service->submit($quizId);
+       /* return response()->json([
             'status' => 'success',
             'data' => [
                 'attempt_id' => $attempt->id,
@@ -81,6 +89,7 @@ class QuizController extends Controller
                 'is_passed' => $isPassed,
                 'correct_answers' => $correctAnswersCount . '/' . $totalQuestions
             ]
-        ]);
+        ]);*/
+        return $quiz;
     }
 }

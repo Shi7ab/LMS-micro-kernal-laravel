@@ -1,17 +1,41 @@
 <?php
-// plugins/Courses/src/Models/Course.php
+
 namespace plugins\Course\src\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Str;
 
-class Course extends Model
+class Lesson extends Model
 {
-    use HasUuids;
-    protected $fillable = ['instructor_id', 'title', 'description', 'status'];
+    protected $table = 'lessons';
 
-    public function lessons()
+    protected $fillable = [
+        'id',
+        'course_id',
+        'title',
+        'content',
+        'sort_order',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | UUID Configuration
+    |--------------------------------------------------------------------------
+    */
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    protected static function boot()
     {
-        return $this->hasMany(Lesson::class)->orderBy('sort_order', 'asc');
+        parent::boot();
+
+        static::creating(function ($lesson) {
+
+            if (!$lesson->id) {
+                $lesson->id = (string) Str::uuid();
+            }
+        });
     }
 }

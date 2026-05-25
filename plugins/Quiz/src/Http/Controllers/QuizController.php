@@ -8,6 +8,7 @@ use plugins\Quiz\src\Models\QuizQuestion;
 use plugins\Quiz\src\Models\QuizAttempt;
 use Illuminate\Support\Facades\Event;
 use plugins\Quiz\src\Services\QuizService;
+use Illuminate\Support\Facades\Auth;
 
 class QuizController extends Controller
 {
@@ -51,8 +52,10 @@ class QuizController extends Controller
 
     public function submit(Request $request, $quizId)
     {  // submiting questuin and validate the answer
-       //$quiz = Quiz::with('questions')->findOrFail($quizId);
+       $quiz = Quiz::with('questions')->findOrFail($quizId);
         // $studentId = $request->attributes->get('user_id');
+
+        $studentId = Auth::id();
         $validated = $request->validate([
             'answers' => 'required|array',
         ]);

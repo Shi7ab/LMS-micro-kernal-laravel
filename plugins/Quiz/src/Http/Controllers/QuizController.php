@@ -11,10 +11,11 @@ use plugins\Quiz\src\Services\QuizService;
 
 class QuizController extends Controller
 {
-    public $service;
+    /*
+    protected $service;
     public function __contruct(QuizService $service){
       $this->service = $service;
-    }
+    }*/
 
     public function store(Request $request)
     {
@@ -28,7 +29,7 @@ class QuizController extends Controller
             'questions.*.correct_option' => 'required|string',
         ]);
         // creating the quiz
-     /*   $quiz = Quiz::create([
+        $quiz = Quiz::create([
             'lesson_id' => $validated['lesson_id'],
             'title' => $validated['title'],
             'passing_score' => $validated['passing_score']
@@ -40,9 +41,9 @@ class QuizController extends Controller
                 'options' => $q['options'],
                 'correct_option' => $q['correct_option']
             ]);
-        }*/
+        }
 
-            $quiz =  $service->create($validated);
+         //   $quiz =  $service->create($validated);
 
         return response()->json(['status' => 'success', 'data' => $quiz->load('questions')], 201);
     }
@@ -55,7 +56,7 @@ class QuizController extends Controller
         $validated = $request->validate([
             'answers' => 'required|array',
         ]);
-        /*
+
         $totalQuestions = $quiz->questions->count();
         $correctAnswersCount = 0;
 
@@ -79,9 +80,9 @@ class QuizController extends Controller
         if ($isPassed) {
             Event::dispatch('quiz.passed', [$studentId, $quiz->lesson_id]);
         }
-            */
-        $quiz = $service->submit($quizId);
-       /* return response()->json([
+
+      //  $quiz = $service->submit($quizId);
+        return response()->json([
             'status' => 'success',
             'data' => [
                 'attempt_id' => $attempt->id,
@@ -89,7 +90,7 @@ class QuizController extends Controller
                 'is_passed' => $isPassed,
                 'correct_answers' => $correctAnswersCount . '/' . $totalQuestions
             ]
-        ]);*/
+        ]);
         return $quiz;
     }
 }

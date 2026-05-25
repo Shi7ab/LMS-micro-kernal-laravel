@@ -18,6 +18,7 @@ class ProgressController extends Controller
     /**
      * Mark lesson as completed
      */
+    
     public function markAsComplete(Request $request, string $lessonId)
     {
         $studentId = auth()->id();

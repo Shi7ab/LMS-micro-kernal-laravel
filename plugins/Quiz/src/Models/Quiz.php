@@ -1,6 +1,6 @@
 <?php
 // plugins/Quiz/src/Models/Quiz.php
-namespace Plugins\Quiz\src\Models;
+namespace plugins\Quiz\src\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

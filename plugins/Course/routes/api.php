@@ -22,6 +22,10 @@ Route::middleware('jwt.auth')->group(function () {
             'publish'
         ]);
 
+        Route::get('/', [
+             CourseController::class,
+           'findAll'
+         ]);
         // reorder lessons
         Route::patch('/{courseId}/lessons/reorder', [
             CourseController::class,

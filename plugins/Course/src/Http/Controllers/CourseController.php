@@ -12,6 +12,8 @@ use plugins\Course\src\Models\Course;
 
 use plugins\Course\src\Models\Lesson;
 //use plugins\Course\src\Models\Course;
+use plugins\Course\src\Events\CoursePublished;
+
 
 class CourseController extends Controller
 {
@@ -32,6 +34,7 @@ class CourseController extends Controller
         }
 
         $course = Course::create([
+
             'instructor_id' => $userId,
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
@@ -48,11 +51,12 @@ class CourseController extends Controller
     /**
      * Add lesson to course
      */
-
     public function addLesson(Request $request, string $courseId)
     {
         $validated = $request->validate([
+
             'title' => ['required', 'string', 'max:255'],
+
             'content' => ['nullable', 'string'],
         ]);
 
@@ -61,8 +65,11 @@ class CourseController extends Controller
         $lastOrder = $course->lessons()->max('sort_order') ?? 0;
 
         $lesson = $course->lessons()->create([
+
             'title' => $validated['title'],
+
             'content' => $validated['content'] ?? null,
+
             'sort_order' => $lastOrder + 1,
         ]);
 
@@ -73,6 +80,16 @@ class CourseController extends Controller
         );
     }
 
+    /**
+     * get all courses and lessons
+     **/
+    public function findAll(){
+        $course = Course::All();
+
+        return ApiResponse::success(
+            $course
+        );
+    }
     /**
      * Publish course
      */
@@ -85,6 +102,7 @@ class CourseController extends Controller
         ]);
 
         Event::dispatch('course.published', $course);
+       //  event(new CoursePublished($course));
 
         return ApiResponse::success(
             $course,
@@ -94,7 +112,7 @@ class CourseController extends Controller
 
     /**
      * Reorder lessons
-     */
+    **/
     public function reorderLessons(Request $request, string $courseId)
     {
         $validated = $request->validate([

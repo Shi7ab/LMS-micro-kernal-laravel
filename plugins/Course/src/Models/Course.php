@@ -3,18 +3,23 @@
 namespace plugins\Course\src\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Lesson extends Model
+class Course extends Model
 {
-    protected $table = 'lessons';
+    use HasUuids;
+
+    protected $table = 'courses';
 
     protected $fillable = [
-        'id',
-        'course_id',
+
         'title',
-        'content',
-        'sort_order',
+
+        'description',
+
+        'status',
+
+        'instructor_id'
     ];
 
     /*
@@ -23,19 +28,16 @@ class Lesson extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function lessons()
+    {
+        return $this->hasMany(
+            Lesson::class,
+            'course_id'
+        );
+    }
+    
     public $incrementing = false;
 
     protected $keyType = 'string';
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($lesson) {
-
-            if (!$lesson->id) {
-                $lesson->id = (string) Str::uuid();
-            }
-        });
-    }
 }

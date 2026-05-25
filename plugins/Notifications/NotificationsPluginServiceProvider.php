@@ -5,6 +5,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use plugins\Course\src\Events\CoursePublished;
 
 class NotificationsPluginServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,16 @@ class NotificationsPluginServiceProvider extends ServiceProvider
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+        });
+
+       /* Event::listen(CoursePublished::class,
+        function (){
+            log('course published successfully !');
+        }
+        );*/
+
+        Event::listen('course.published', function(){
+            log('course published successfully !');
         });
 
 

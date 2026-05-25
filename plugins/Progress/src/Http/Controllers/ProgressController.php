@@ -1,56 +1,54 @@
 <?php
-// plugins/Progress/src/Http/Controllers/ProgressController.php
+
 namespace plugins\Progress\src\Http\Controllers;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use plugins\Progress\src\Models\LessonProgress;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\Controller;
+use plugins\Progress\src\Services\ProgressService;
 
 class ProgressController extends Controller
 {
+    protected ProgressService $service;
 
-    public function markAsComplete(Request $request, $lessonId)
+    public function __construct(ProgressService $service)
     {
-        $studentId = $request->attributes->get('user_id');
+        $this->service = $service;
+    }
 
-        $progress = LessonProgress::firstOrCreate([
-            'student_id' => $studentId,
-            'lesson_id' => $lessonId
-        ]);
+    /**
+     * Mark lesson as completed
+     */
+    public function markAsComplete(Request $request, string $lessonId)
+    {
+        $studentId = auth()->id();
+
+        $progress = $this->service->markAsComplete(
+            $studentId,
+            $lessonId
+        );
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Lesson marked as completed successfully.'
+            'message' => 'Lesson marked as completed successfully.',
+            'data' => $progress,
         ], 200);
     }
 
-    public function getCourseProgress(Request $request, $courseId)
+    /**
+     * Get course progress
+     */
+    public function getCourseProgress(Request $request, string $courseId)
     {
-        $studentId = $request->attributes->get('user_id');
+        $studentId = auth()->id();
 
-        $totalLessons = DB::table('lessons')->where('course_id', $courseId)->count();
-
-        if ($totalLessons === 0) {
-            return response()->json(['status' => 'success', 'progress_percentage' => 0]);
-        }
-
-        $completedLessons = DB::table('student_lesson_progress')
-            ->join('lessons', 'student_lesson_progress.lesson_id', '=', 'lessons.id')
-            ->where('student_lesson_progress.student_id', $studentId)
-            ->where('lessons.course_id', $courseId)
-            ->count();
-
-        $percentage = ($completedLessons / $totalLessons) * 100;
+        $progress = $this->service->getCourseProgress(
+            $studentId,
+            $courseId
+        );
 
         return response()->json([
             'status' => 'success',
-            'data' => [
-                'course_id' => $courseId,
-                'total_lessons' => $totalLessons,
-                'completed_lessons' => $completedLessons,
-                'progress_percentage' => round($percentage, 2) . '%'
-            ]
-        ]);
+            'data' => $progress,
+        ], 200);
     }
 }

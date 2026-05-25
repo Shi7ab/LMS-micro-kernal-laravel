@@ -1,11 +1,11 @@
 <?php
 
-namespace Kernel\Middleware;
+namespace Kernal\Middelware;
 
 use Closure;
 use Illuminate\Http\Request;
 
-class RoleMiddleware
+class RoleMiddelware
 {
     public function handle(
         Request $request,

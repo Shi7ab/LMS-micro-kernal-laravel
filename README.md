@@ -27,3 +27,7 @@ LMS-micro-kernal/
 │   │       └── Providers/         # AuthServiceProvider (Local bootstrapper)
 │   └── Courses/          # Course & Enrollment Management Plugin
 └── routes/               # Core routing registration
+
+
+
+postman collection : "https://web.postman.co/workspace/2dc1925f-b75c-41f9-86e9-3d85e5c272b3/documentation/38688994-ff886e8c-4e59-44cb-944b-9b199a36bc18"

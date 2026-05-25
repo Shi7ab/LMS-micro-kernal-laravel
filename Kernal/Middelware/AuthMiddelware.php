@@ -1,12 +1,12 @@
 <?php
 
-namespace Kernel\Middleware;
+namespace Kernal\Middelware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthMiddleware
+class AuthMiddelware
 {
     public function handle(Request $request, Closure $next)
     {

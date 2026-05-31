@@ -5,6 +5,7 @@ namespace plugins\Progress\src\Services;
 
 use plugins\Progress\src\Models\LessonProgress;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ProgressService
 {
@@ -12,7 +13,8 @@ class ProgressService
 
     public function markAsComplete(Request $request, $lessonId)
     {
-        $studentId = $request->attributes->get('user_id');
+        // $studentId = $request->attributes->get('user_id');
+        $studentId = Auth::id();
 
         $progress = LessonProgress::firstOrCreate([
             'student_id' => $studentId,
@@ -27,7 +29,8 @@ class ProgressService
 
     public function getCourseProgress(Request $request, $courseId)
     {
-        $studentId = $request->attributes->get('user_id');
+        // $studentId = $request->attributes->get('user_id');
+        $studentId = Auth::id();
 
         $totalLessons = DB::table('lessons')->where('course_id', $courseId)->count();
 
@@ -53,6 +56,7 @@ class ProgressService
             ]
         ]);
     }
+    
 }
 
 

@@ -1,0 +1,117 @@
+name: LMS Micro-Kernel CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # --- JOB 1: Continuous Integration (Testing Pipeline) ---
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      # Spin up a live PostgreSQL container mirroring your production setup
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: lms_micro_kernel_test
+          POSTGRES_PASSWORD: secret_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout Codebase
+      uses: actions/checkout@v4
+
+    - name: Setup PHP Environment
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql, bcmath
+        coverage: none
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Copy Testing Environment File
+      run: cp .env.example .env
+
+    - name: Update Testing Configurations
+      run: |
+        sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=pgsql/g' .env
+        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=127.0.0.1/g' .env
+        sed -i 's/DB_PORT=3306/DB_PORT=5432/g' .env
+        sed -i 's/DB_DATABASE=laravel/DB_DATABASE=lms_micro_kernel_test/g' .env
+        sed -i 's/DB_USERNAME=root/DB_USERNAME=postgres/g' .env
+        sed -i 's/DB_PASSWORD=/DB_PASSWORD=secret_password/g' .env
+
+    - name: Install PHP Dependencies (Composer)
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Generate Application Cryptographic Key
+      run: php artisan key:generate
+
+    - name: Compile Frontend Assets
+      run: |
+        npm install
+        npm run build
+
+    - name: Execute System Migrations
+      run: php artisan migrate --force
+
+    - name: Execute Isolated Unit Tests
+      run: php artisan test --testsuite=Unit
+
+  # --- JOB 2: Continuous Deployment (Production Release Pipeline) ---
+  deploy-to-production:
+    needs: laravel-tests
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout Codebase
+      uses: actions/checkout@v4
+
+    - name: Deploy via SSH to Server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        port: ${{ secrets.SERVER_PORT || 22 }}
+        script: |
+          cd /var/www/LMS-micro-kernal
+
+          # Put application into maintenance mode
+          php artisan down --message="Deploying system updates..."
+
+          # Pull latest stable code
+          git pull origin main
+
+          # Install production packages securely
+          composer install --no-dev --optimize-autoloader --no-interaction
+          npm install
+          npm run build
+
+          # Cache settings for performance optimization
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+          # Safe live schema updates
+          php artisan migrate --force
+
+          # Restart background daemon processes
+          php artisan queue:restart
+
+          # Bring application back online
+          php artisan up

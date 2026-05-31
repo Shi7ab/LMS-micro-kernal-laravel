@@ -41,7 +41,7 @@ class QuizService
     }
 
     /**
-     * Submit quiz answers
+     * Submit quiz answers with specific question id 
      */
     public function submit(array $data, string $quizId, string $studentId): array
     {

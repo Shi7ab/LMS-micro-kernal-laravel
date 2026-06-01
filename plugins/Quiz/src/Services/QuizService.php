@@ -8,11 +8,12 @@ use plugins\Quiz\src\Models\Quiz;
 use plugins\Quiz\src\Models\QuizAttempt;
 use plugins\Quiz\src\Events\QuizPassed;
 
+
 class QuizService
 {
     /**
      * Create new quiz with questions
-     */
+     **/
     public function create(array $data): Quiz
     {
         return DB::transaction(function () use ($data) {
@@ -41,7 +42,7 @@ class QuizService
     }
 
     /**
-     * Submit quiz answers with specific question id 
+     * Submit quiz answers with specific question id
      */
     public function submit(array $data, string $quizId, string $studentId): array
     {

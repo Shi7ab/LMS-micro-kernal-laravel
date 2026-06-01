@@ -1,13 +1,14 @@
 <?php
 
-namespace Plugins\Enrollment\src\Services;
+namespace plugins\Enrollment\src\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Plugins\Enrollment\src\Events\EnrollmentCreated;
+use plugins\Enrollment\src\Events\EnrollmentCreated;
 
 class EnrollmentService
 {
+    
     /**
      *
      *
@@ -32,7 +33,7 @@ class EnrollmentService
                 'updated_at'   => now()
             ]);
         });
-    
+
         event(new EnrollmentCreated([
             'enrollment_id' => $enrollmentId,
             'student_id'    => $data['student_id'],

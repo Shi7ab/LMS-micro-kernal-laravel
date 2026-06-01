@@ -15,6 +15,10 @@ Route::middleware('jwt.auth')->group(function () {
             CourseController::class,
             'addLesson'
         ]);
+         Route::get('/lessons', [
+            CourseController::class,
+            'findAllLesson'
+        ]);
 
         // publish course
         Route::patch('/{courseId}/publish', [

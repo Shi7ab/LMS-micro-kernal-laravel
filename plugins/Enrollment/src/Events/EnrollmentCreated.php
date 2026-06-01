@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Enrollment\src\Events;
+namespace plugins\Enrollment\src\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -11,7 +11,7 @@ class EnrollmentCreated
 
     public array $data;
 
-    
+
     public function __construct(array $data)
     {
         $this->data = $data;

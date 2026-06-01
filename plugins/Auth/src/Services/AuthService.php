@@ -5,6 +5,7 @@ namespace plugins\Auth\src\Services;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use plugins\Auth\src\Repositories\UserRepository;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AuthService
 {
@@ -30,20 +31,24 @@ class AuthService
         ];
     }
 
+
     public function login(array $data): array
     {
-        $token = auth()->attempt([
-            'email' => $data['email'],
-            'password' => $data['password']
-        ]);
+        $user = $this->users->findByEmail($data['email']);
 
-        if (!$token) {
-            throw new \Exception('Invalid credentials');
+        if (!$user) {
+            throw new UnauthorizedHttpException('', 'Invalid credentials');
         }
 
+        if (!Hash::check($data['password'], $user->password)) {
+            throw new UnauthorizedHttpException('', 'Invalid credentials');
+        }
+
+        $token = JWTAuth::fromUser($user);
+
         return [
-            'user' => auth()->user(),
-            'token' => $token
+            'user' => $user,
+            'token' => $token,
         ];
     }
 }

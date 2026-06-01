@@ -1,39 +1,50 @@
 <?php
 
-namespace Plugins\Media\src\Services;
+namespace plugins\Media\src\Services;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Plugins\Media\src\Models\LessonMedia;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use plugins\Media\src\Events\MediaUploaded;
+use plugins\Media\src\Models\LessonMedia;
 
 
 class MediaService
 {
-    /**
-     * Upload and attach media file.
-     *
-     * @param UploadedFile $file
-     * @param string|null $lessonId
-     * @return array
-     */
-    public function attach(UploadedFile $file, ?string $lessonId = null): array
-    {
+    public function upload(
+        string $lessonId,
+        UploadedFile $file
+    ): LessonMedia {
+        return DB::transaction(function () use (
+            $lessonId,
+            $file
+        ) {
+            $path = $file->store(
+                'media',
+                'public'
+            );
 
-       $file = $request->file('file');
+            $media = LessonMedia::create([
+                'lesson_id' => $lessonId,
+                'file_name' => $file->getClientOriginalName(),
+                'file_path' => Storage::url($path),
+                'file_type' => $file->getMimeType(),
+                'size_in_bytes' => $file->getSize(),
+            ]);
 
-        //  store in this folder (storage/app/public/media)
-        $path = $file->store('public/media');
+            MediaUploaded::dispatch($media);
 
-        $media = LessonMedia::create([
-            'lesson_id' => $validated['lesson_id'],
-            'file_name' => $file->getClientOriginalName(),
-            'file_path' => Storage::url($path), //  for example: /storage/media/filename.mp4
-            'file_type' => $file->getClientMimeType(),
-            'size_in_bytes' => $file->getSize(),
-        ]);
+            return $media;
+        });
+    }
 
-        return $media;
+    public function getMediaByLesson(
+        string $lessonId
+    ): Collection {
+        return LessonMedia::query()
+            ->where('lesson_id', $lessonId)
+            ->latest()
+            ->get();
     }
 }

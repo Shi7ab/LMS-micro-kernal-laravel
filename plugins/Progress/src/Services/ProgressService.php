@@ -11,23 +11,17 @@ class ProgressService
 {
 
 
-    public function markAsComplete(Request $request, $lessonId)
+    public function markAsComplete(string $lessonId)
     {
-        // $studentId = $request->attributes->get('user_id');
         $studentId = Auth::id();
 
-        $progress = LessonProgress::firstOrCreate([
+        return LessonProgress::firstOrCreate([
             'student_id' => $studentId,
-            'lesson_id' => $lessonId
+            'lesson_id' => $lessonId,
         ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Lesson marked as completed successfully.'
-        ], 200);
     }
-
-    public function getCourseProgress(Request $request, $courseId)
+    
+    public function getCourseProgress(string $studentId, string $courseId)
     {
         // $studentId = $request->attributes->get('user_id');
         $studentId = Auth::id();
@@ -56,7 +50,7 @@ class ProgressService
             ]
         ]);
     }
-    
+
 }
 
 

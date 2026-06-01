@@ -48,10 +48,7 @@ class CourseService
     //  find all courses
     public function findAllCourse(){
             $course = Course::All();
-
-            return ApiResponse::success(
-                $course
-            );
+            return $course;
         }
 
     // course life sycle (Draft -> Published)

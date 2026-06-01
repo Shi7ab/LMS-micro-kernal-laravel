@@ -18,21 +18,15 @@ class ProgressController extends Controller
     /**
      * Mark lesson as completed
      */
-    
+
     public function markAsComplete(Request $request, string $lessonId)
     {
-        $studentId = auth()->id();
-
-        $progress = $this->service->markAsComplete(
-            $studentId,
-            $lessonId
-        );
+        $progress = $this->service->markAsComplete($lessonId);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Lesson marked as completed successfully.',
-            'data' => $progress,
-        ], 200);
+            'data' => $progress
+        ]);
     }
 
     /**

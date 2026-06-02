@@ -2,42 +2,33 @@
 
 namespace plugins\Enrollment\src\Services;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use plugins\Enrollment\src\Events\EnrollmentCreated;
+use plugins\Enrollment\src\Repositories\EnrollmentRepository;
 
 class EnrollmentService
 {
-    
-    /**
-     *
-     *
-     * @param array
-     * @return string
-     */
+    public function __construct(
+        private readonly EnrollmentRepository $enrollmentRepository
+    ) {}
 
+    /**
+     * Enroll student in course
+     */
     public function enroll(array $data): string
     {
-
         $enrollmentId = (string) Str::uuid();
 
-        DB::transaction(function () use ($data, $enrollmentId) {
-            DB::table('enrollments')->insert([
-                'id'           => $enrollmentId,
-                'course_id'    => $data['course_id'],
-                'student_id'   => $data['student_id'],
-                'status'       => 'active',
-                'enrolled_at'  => now(),
-                'completed_at' => null,
-                'created_at'   => now(),
-                'updated_at'   => now()
-            ]);
-        });
+        $this->enrollmentRepository->enroll([
+            'id'         => $enrollmentId,
+            'course_id'  => $data['course_id'],
+            'student_id' => $data['student_id'],
+        ]);
 
         event(new EnrollmentCreated([
             'enrollment_id' => $enrollmentId,
             'student_id'    => $data['student_id'],
-            'course_id'     => $data['course_id']
+            'course_id'     => $data['course_id'],
         ]));
 
         return $enrollmentId;

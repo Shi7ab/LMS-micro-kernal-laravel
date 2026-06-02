@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Kernel\Support\ApiResponse;
 use plugins\Course\src\Services\CourseService;
-use plugins\Course\src\Services\CoursePublishingService;
+use plugins\Course\src\Services\CoursePublishService;
 class CourseController extends Controller
 {
     public function __construct(
         private readonly CourseService $courseService,
-        private readonly CoursePublishingService $coursePublish
+        private readonly CoursePublishService $coursePublish
     ) {}
 
     /**

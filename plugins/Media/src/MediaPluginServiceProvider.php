@@ -3,6 +3,8 @@ namespace Plugins\Media\src;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use plugins\Media\src\Repositories\MediaRepository;
+
 
 class MediaPluginServiceProvider extends ServiceProvider
 {
@@ -10,6 +12,8 @@ class MediaPluginServiceProvider extends ServiceProvider
     {
         // Load isolated migrations for this plugin domain automatically
         $this->loadMigrationsFrom(base_path('plugins/Media/database/migrations'));
+
+        $this->app->bind(MediaRepository::class);
     }
 
     public function boot(): void

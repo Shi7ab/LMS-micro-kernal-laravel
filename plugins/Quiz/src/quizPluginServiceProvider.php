@@ -3,6 +3,7 @@ namespace plugins\Quiz\src;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use plugins\Quiz\src\Repositories\QuizRepository;
 
 class QuizPluginServiceProvider extends ServiceProvider
 {
@@ -10,6 +11,9 @@ class QuizPluginServiceProvider extends ServiceProvider
     {
         // Load isolated migrations for this plugin domain automatically
         $this->loadMigrationsFrom(base_path('plugins/Quiz/database/migrations'));
+         $this->app->bind(
+            QuizRepository::class
+        );
     }
 
     public function boot(): void

@@ -2,81 +2,59 @@
 
 namespace plugins\Course\src\Services;
 
-use Illuminate\Http\Request;
-use plugins\Course\src\Models\Lesson;
-use plugins\Course\src\Models\Course;
-use Illuminate\Support\Facades\Event;
+use plugins\Course\src\Repositories\CourseRepository;
 
 class CourseService
 {
+    public function __construct(
+        protected CourseRepository $courseRepository
+    ) {}
 
+    /**
+     * Create new course
+     */
     public function create(array $data)
     {
-        $validated =  $data;
-
-        // check the user_id in the keranl - Auth Middleware
-
-        $course = Course::create([
+        return $this->courseRepository->createCourse([
             'instructor_id' => auth()->id(),
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-            'status' => 'draft'
-        ]);
-
-        return $course;
-    }
-
-    // add new lesson
-   public function addLesson(string $courseId, array $data)
-    {
-        $course = Course::findOrFail($courseId);
-
-        $lastOrder = $course->lessons()->max('sort_order') ?? 0;
-
-        return $course->lessons()->create([
-            'title' => $data['title'],
-            'content' => $data['content'] ?? null,
-            'sort_order' => $lastOrder + 1
+            'title'         => $data['title'],
+            'description'   => $data['description'] ?? null,
+            'status'        => 'draft',
         ]);
     }
 
-    // find all lesson
-    public function findAllLesson(){
-        return Lesson::all();
-    }
-
-    //  find all courses
-    public function findAllCourse(){
-            $course = Course::All();
-            return $course;
-        }
-
-    // course life sycle (Draft -> Published)
-    public function publish($id)
+    /**
+     * Get all courses
+     */
+    public function findAllCourse()
     {
-        $course = Course::findOrFail($id);
-        $course->update(['status' => 'published']);
-
-        // create new event for the listener
-        Event::dispatch('course.published', [$course]);
-
-        return $id;
+        return $this->courseRepository->getAllCourse();
     }
 
-    // restore the lessons (Content Ordering)
-    public function reorderLessons(array $request, $courseId)
+    /**
+     * Get course by id
+     */
+    public function findById(string $courseId)
     {
-        $validated = $request;
-
-        foreach ($lessons as $lessonData) {
-            Lesson::where('id', $lessonData['id'])
-                ->where('course_id', $courseId)
-                ->update([
-                    'sort_order' => $lessonData['sort_order']
-                ]);
-        }
-
-        return true;
+        return $this->courseRepository->getCourseById($courseId);
     }
 
+    /**
+     * Update course
+     */
+    public function update(string $courseId, array $data)
+    {
+        return $this->courseRepository->updateCourse(
+            $data,
+            $courseId
+        );
+    }
+
+    /**
+     * Delete course
+     */
+    public function delete(string $courseId)
+    {
+        return $this->courseRepository->deleteCourse($courseId);
+    }
 }

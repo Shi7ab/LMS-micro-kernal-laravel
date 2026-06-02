@@ -2,38 +2,35 @@
 
 use Illuminate\Support\Facades\Route;
 use plugins\Course\src\Http\Controllers\CourseController;
+use plugins\Course\src\Http\Controllers\LessonController;
 
 Route::middleware('jwt.auth')->group(function () {
 
-  //  Route::prefix('courses')->group(function () {
+    Route::prefix('courses')->group(function () {
 
-        // create course
+        // Courses
         Route::post('/', [CourseController::class, 'store']);
+        Route::get('/', [CourseController::class, 'index']);
 
-        // add lesson to course
-        Route::post('/{courseId}/lessons', [
-            CourseController::class,
-            'addLesson'
-        ]);
-         Route::get('/lessons', [
-            CourseController::class,
-            'findAllLesson'
-        ]);
+        // Lessons
+        Route::post(
+            '/{courseId}/lessons',
+            [LessonController::class, 'store']
+        );
 
-        // publish course
-        Route::patch('/{courseId}/publish', [
-            CourseController::class,
-            'publish'
-        ]);
+        Route::patch(
+            '/{courseId}/lessons/reorder',
+            [LessonController::class, 'reorder']
+        );
+    });
 
-        Route::get('/', [
-             CourseController::class,
-           'findAll'
-         ]);
-        // reorder lessons
-        Route::patch('/{courseId}/lessons/reorder', [
-            CourseController::class,
-            'reorderLessons'
-        ]);
-  //  });
+    Route::get(
+        '/lessons',
+        [LessonController::class, 'index']
+    );
+
+    Route::post(
+        '/courses/{courseId}/publish',
+        [CourseController::class, 'publish']
+    );
 });

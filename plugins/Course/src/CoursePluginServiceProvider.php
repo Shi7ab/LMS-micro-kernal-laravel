@@ -3,6 +3,10 @@ namespace Plugins\Course\src;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use plugins\Course\src\Contracts\CourseServiceInterface;
+use plugins\Course\src\Contracts\LessonServiceInterface;
+use plugins\Course\src\Repositories\CourseRepository;
+use plugins\Course\src\Repositories\LessonRepository;
 
 class CoursePluginServiceProvider extends ServiceProvider
 {
@@ -10,6 +14,16 @@ class CoursePluginServiceProvider extends ServiceProvider
     {
         // Load isolated migrations for this plugin domain automatically
         $this->loadMigrationsFrom(base_path('plugins/Course/database/migrations'));
+
+        $this->app->bind(
+             CourseRepositoryInterface::class,
+            CourseRepository::class
+        );
+
+        $this->app->bind(
+            LessonRepositoryInterface::class,
+            LessonRepository::class
+        );
     }
 
     public function boot(): void
